@@ -1,54 +1,13 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include "EvalConsoleErrors.hpp"
+#include "FileHelper.hpp"
 using namespace std;
 
-class EvalConsoleError : exception
-{
-public:
-    unsigned int ID = 0;
-    string Description = NULL;
 
-    EvalConsoleError(unsigned int _ID, string _Description)
-    {
-        ID = _ID;
-        Description = _Description;
-    }
-};
-
-class EvalConsoleError_WrongZone : public EvalConsoleError
-{
-public:
-    EvalConsoleError_WrongZone(string wrongZoneName)
-        : EvalConsoleError(1, string("Zone ") + wrongZoneName + " does not exist") {};
-    EvalConsoleError_WrongZone()
-        : EvalConsoleError(1, string("Zone does not exist")) {};
-};
-
-class EvalConsoleError_CannotOpenFile : public EvalConsoleError
-{
-public:
-    EvalConsoleError_CannotOpenFile(string fileName)
-        : EvalConsoleError(2, string("Cannot open ") + fileName) {};
-    EvalConsoleError_CannotOpenFile()
-        : EvalConsoleError(2, string("Cannot open file")) {};
-};
-
-
-
-void copyFileInStream(const string& fileName, ofstream& stream)
-{
-    string line;
-    ifstream file(fileName);
-    if (!file.is_open())
-        throw new EvalConsoleError_CannotOpenFile(fileName);
-    while (!file.eof())
-    {
-        getline(file, line);
-        stream << line << endl;
-    }
-    file.close();
-}
+string beforeCode = "int main(int argc, char* argv[])\n{\n";
+string afterCode = "return 0;\n}\n";
 
 void collectChild()
 {
@@ -60,9 +19,9 @@ void collectChild()
 
     copyFileInStream("childCode_Libs.cpp", childCodeFile);
     copyFileInStream("childCode_Ops.cpp", childCodeFile);
-    copyFileInStream("childCode_BeforeCode.cpp", childCodeFile);
+    childCodeFile << beforeCode;
     copyFileInStream("childCode_Code.cpp", childCodeFile);
-    copyFileInStream("childCode_AfterCode.cpp", childCodeFile);
+    childCodeFile << afterCode;
 
     childCodeFile.close();
 }
@@ -107,16 +66,9 @@ void insertInZone(string& insertedZone, string& insertedStr)
 
 void clearAllZones()
 {
-    ofstream childCode_Libs("childCode_Libs.cpp", ios::out | ios::trunc);
-    childCode_Libs.close();
-    ofstream childCode_Ops("childCode_Ops.cpp", ios::out | ios::trunc);
-    childCode_Ops.close();
-    ofstream childCode_BeforeCode("childCode_BeforeCode.cpp", ios::out | ios::trunc);
-    childCode_BeforeCode.close();
-    ofstream childCode_Code("childCode_Code.cpp", ios::out | ios::trunc);
-    childCode_Code.close();
-    ofstream childCode_AfterCode("childCode_AfterCode.cpp", ios::out | ios::trunc);
-    childCode_AfterCode.close();
+    clearFile("childCode_Libs.cpp");
+    clearFile("childCode_Ops.cpp");
+    clearFile("childCode_Code.cpp");
 }
 
 
