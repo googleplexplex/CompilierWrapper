@@ -2,6 +2,7 @@
 #include <string>
 using namespace std;
 
+
 class EvalConsoleError : exception
 {
 public:
@@ -14,6 +15,7 @@ public:
         Description = _Description;
     }
 };
+
 
 class EvalConsoleError_WrongZone : public EvalConsoleError
 {
@@ -31,4 +33,25 @@ public:
         : EvalConsoleError(2, string("Cannot open ") + fileName) {};
     EvalConsoleError_CannotOpenFile()
         : EvalConsoleError(2, string("Cannot open file")) {};
+};
+
+class EvalConsoleError_CannotStartChild : public EvalConsoleError
+{
+public:
+    EvalConsoleError_CannotStartChild()
+        : EvalConsoleError(3, string("Cannot start child")) {};
+};
+
+class EvalConsoleError_CannotCompileChild : public EvalConsoleError
+{
+public:
+    EvalConsoleError_CannotCompileChild()
+        : EvalConsoleError(4, string("Cannot compile child")) {};
+};
+
+class EvalConsoleError_SystemError : public EvalConsoleError
+{
+public:
+    EvalConsoleError_SystemError()
+        : EvalConsoleError(5, string("system() doesnot work")) {};
 };

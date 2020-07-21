@@ -6,34 +6,44 @@
 using namespace std;
 
 
+string appPath;
+
+fileInfo childFile("childCode.cpp");
+fileInfo childLibsFile("childCode_Libs.cpp");
+fileInfo childOpsFile("childCode_Ops.cpp");
+fileInfo childCodeFile("childCode_Code.cpp");
+
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
 
 void collectChild()
 {
     string line;
-    ofstream childCodeFile;
-    childCodeFile.open("childCode.cpp");
-    if (!childCodeFile.is_open())
-        throw new EvalConsoleError_CannotOpenFile("childCode.cpp");
+    ofstream childCodeFileStream;
+    childCodeFileStream.open(childFile.absolutePath);
+    if (!childCodeFileStream.is_open())
+        throw new EvalConsoleError_CannotOpenFile(childFile.absolutePath);
 
-    copyFileInStream("childCode_Libs.cpp", childCodeFile);
-    copyFileInStream("childCode_Ops.cpp", childCodeFile);
-    childCodeFile << beforeCode;
-    copyFileInStream("childCode_Code.cpp", childCodeFile);
-    childCodeFile << afterCode;
+    copyFileInStream(childLibsFile.absolutePath, childCodeFileStream);
+    copyFileInStream(childOpsFile.absolutePath, childCodeFileStream);
+    childCodeFileStream << beforeCode;
+    copyFileInStream(childCodeFile.absolutePath, childCodeFileStream);
+    childCodeFileStream << afterCode;
 
-    childCodeFile.close();
+    childCodeFileStream.close();
 }
 
 void compileChild()
 {
-    //compile "ChildCode.cpp"
+    string command = "\"" + appPath + "\\Compiliers\\x86_64-7.2.0-posix-seh-rt_v5-rev1\\mingw64\\bin\\g++.exe\" " + childFile.absolutePath;
+    safetySystem(command);
 }
 
 void startChild()
 {
-    //start "ChildCode.exe"
+    string gccBinPath = string("") + appPath + "\\Compiliers\\x86_64-7.2.0-posix-seh-rt_v5-rev1\\mingw64\\bin";
+    string command = gccBinPath + "\\a.exe " + "\"" + gccBinPath + "\"";
+    safetySystem(command);
 }
 
 
@@ -50,11 +60,10 @@ string getInsertedZoneFromInput(string& inp)
     throw new EvalConsoleError_WrongZone(inp);
 }
 
-
 void insertInZone(string& insertedZone, string& insertedStr)
 {
     ofstream insertedZoneFile;
-    string insertedZoneFileName = "childCode_" + insertedZone + ".cpp";
+    string insertedZoneFileName = "Debug\\childCode_" + insertedZone + ".cpp";
     insertedZoneFile.open(insertedZoneFileName, ios::app);
 
     if (!insertedZoneFile.is_open())
@@ -66,16 +75,21 @@ void insertInZone(string& insertedZone, string& insertedStr)
 
 void clearAllZones()
 {
-    clearFile("childCode_Libs.cpp");
-    clearFile("childCode_Ops.cpp");
-    clearFile("childCode_Code.cpp");
+    clearFile(childLibsFile.absolutePath);
+    clearFile(childOpsFile.absolutePath);
+    clearFile(childCodeFile.absolutePath);
 }
 
 
-int main(void)
+int main(int argc, char** argv)
 {
-    clearAllZones();
+    appPath = getAppPath(argv[0]);
+    childFile.fill(appPath);
+    childLibsFile.fill(appPath);
+    childOpsFile.fill(appPath);
+    childCodeFile.fill(appPath);
 
+    clearAllZones();
     while (true)
     {
         cout << ">>>";
