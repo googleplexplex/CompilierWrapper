@@ -3,7 +3,7 @@
 using namespace std;
 
 
-class EvalConsoleError : exception
+class EvalConsoleError
 {
 public:
     unsigned int ID = 0;

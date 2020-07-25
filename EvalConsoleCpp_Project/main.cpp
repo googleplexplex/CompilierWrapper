@@ -23,7 +23,7 @@ void collectChild()
     ofstream childCodeFileStream;
     childCodeFileStream.open(childFile.absolutePath);
     if (!childCodeFileStream.is_open())
-        throw new EvalConsoleError_CannotOpenFile(childFile.absolutePath);
+        throw EvalConsoleError_CannotOpenFile(childFile.absolutePath);
 
     copyFileInStream(childLibsFile.absolutePath, childCodeFileStream);
     copyFileInStream(childOpsFile.absolutePath, childCodeFileStream);
@@ -72,7 +72,7 @@ string getInsertedZoneFromInput(string& inp)
         }
     }
 
-    throw new EvalConsoleError_WrongZone(inp);
+    throw EvalConsoleError_WrongZone(inp);
 }
 
 void insertInZone(string& insertedZone, string& insertedStr)
@@ -82,7 +82,7 @@ void insertInZone(string& insertedZone, string& insertedStr)
     insertedZoneFile.open(insertedZoneFileName, ios::app);
 
     if (!insertedZoneFile.is_open())
-        throw new EvalConsoleError_CannotOpenFile(insertedZoneFileName);
+        throw EvalConsoleError_CannotOpenFile(insertedZoneFileName);
     insertedZoneFile << insertedStr << endl;
 
     insertedZoneFile.close();
