@@ -7,7 +7,7 @@ class EvalConsoleError : exception
 {
 public:
     unsigned int ID = 0;
-    string Description = NULL;
+    string Description = "";
 
     EvalConsoleError(unsigned int _ID, string _Description)
     {

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <windows.h>
 #include "EvalConsoleErrors.hpp"
 #include "FileHelper.hpp"
 using namespace std;
@@ -35,15 +36,29 @@ void collectChild()
 
 void compileChild()
 {
-    string command = "\"" + appPath + "\\Compiliers\\x86_64-7.2.0-posix-seh-rt_v5-rev1\\mingw64\\bin\\g++.exe\" " + childFile.absolutePath;
-    safetySystem(command);
+    STARTUPINFOA cif;
+    ZeroMemory(&cif, sizeof(STARTUPINFO));
+    PROCESS_INFORMATION pi;
+
+    string compilierPath = appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\g++.exe";
+    string pathToCompiliedFile = appPath + "\\childCode.cpp";
+    string compilierAttributes = "-o " + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode";
+    CreateProcessA(compilierPath.c_str(), (char*)((compilierPath + " " + pathToCompiliedFile + " " + compilierAttributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    WaitForSingleObject(pi.hThread, INFINITE);
 }
 
 void startChild()
 {
-    string gccBinPath = string("") + appPath + "\\Compiliers\\x86_64-7.2.0-posix-seh-rt_v5-rev1\\mingw64\\bin";
+    STARTUPINFOA cif;
+    ZeroMemory(&cif, sizeof(STARTUPINFO));
+    PROCESS_INFORMATION pi;
+
+    CreateProcessA((appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode.exe").c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    WaitForSingleObject(pi.hThread, INFINITE);
+
+    /*string gccBinPath = string("") + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin";
     string command = gccBinPath + "\\a.exe " + "\"" + gccBinPath + "\"";
-    safetySystem(command);
+    safetySystem(command);*/
 }
 
 
@@ -62,13 +77,13 @@ string getInsertedZoneFromInput(string& inp)
 
 void insertInZone(string& insertedZone, string& insertedStr)
 {
+    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
     ofstream insertedZoneFile;
-    string insertedZoneFileName = "Debug\\childCode_" + insertedZone + ".cpp";
     insertedZoneFile.open(insertedZoneFileName, ios::app);
 
     if (!insertedZoneFile.is_open())
         throw new EvalConsoleError_CannotOpenFile(insertedZoneFileName);
-    insertedZoneFile << insertedStr;
+    insertedZoneFile << insertedStr << endl;
 
     insertedZoneFile.close();
 }
@@ -90,6 +105,8 @@ int main(int argc, char** argv)
     childCodeFile.fill(appPath);
 
     clearAllZones();
+    clearFile(childFile.absolutePath);
+
     while (true)
     {
         cout << ">>>";
@@ -107,8 +124,10 @@ int main(int argc, char** argv)
         }
         catch (EvalConsoleError catchedError)
         {
-            cout << "Error " << catchedError.ID << " - " << catchedError.Description << endl;
+            cout << "Error " << catchedError.ID << " - " << catchedError.Description;
         }
+
+        cout << endl;
     }
 
     return 0;
