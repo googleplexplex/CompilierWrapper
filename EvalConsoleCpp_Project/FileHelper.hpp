@@ -59,8 +59,14 @@ string getAppPath(const string pathToOpenedExes)
     return "";
 }
 
-void safetySystem(string command)
+bool checkFile(const string file_name)
 {
-    if (system(command.c_str()) != NULL)
-        throw new EvalConsoleError_SystemError();
+    ifstream file;
+    file.open(file_name);
+
+    bool result = file.is_open();
+
+    file.close();
+
+    return result;
 }

@@ -116,13 +116,13 @@ string getInsertedZoneFromInput(string& inp)
 void insertInZone(string& insertedZone, string& insertedStr)
 {
     string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
+
+    if(!checkFile(insertedZoneFileName))
+        throw EvalConsoleError_WrongZone(insertedZone);
+
     ofstream insertedZoneFile;
     insertedZoneFile.open(insertedZoneFileName, ios::app);
-
-    if (!insertedZoneFile.is_open())
-        throw EvalConsoleError_CannotOpenFile(insertedZoneFileName);
     insertedZoneFile << insertedStr << endl;
-
     insertedZoneFile.close();
 }
 
