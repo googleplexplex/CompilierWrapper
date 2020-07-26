@@ -17,6 +17,44 @@ fileInfo childCodeFile("childCode_Code.cpp");
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
 
+
+HWND consoleHWND = GetConsoleWindow();
+
+typedef enum AppStatesEnum
+{
+    inputing = 0,
+    saving,
+    collecting,
+    compiling,
+    playing
+};
+AppStatesEnum AppState;
+
+void showAppState()
+{
+    if (AppState == inputing)
+    {
+        SetWindowTextA(consoleHWND, "Inputing");
+    }
+    else if (AppState == saving)
+    {
+        SetWindowTextA(consoleHWND, "Saving");
+    }
+    else if (AppState == collecting)
+    {
+        SetWindowTextA(consoleHWND, "Collecting");
+    }
+    else if (AppState == compiling)
+    {
+        SetWindowTextA(consoleHWND, "Compiling");
+    }
+    else if (AppState == playing)
+    {
+        SetWindowTextA(consoleHWND, "Playing");
+    }
+}
+
+
 void collectChild()
 {
     string line;
@@ -109,6 +147,7 @@ int main(int argc, char** argv)
 
     while (true)
     {
+        AppState = inputing; showAppState();
         cout << ">>>";
         string inp;
         getline(cin, inp);
@@ -117,9 +156,13 @@ int main(int argc, char** argv)
             string insertedZone = getInsertedZoneFromInput(inp);
             string inp_WithoutInsertedZone = inp.substr(insertedZone.length() + 1);
 
+            AppState = saving; showAppState();
             insertInZone(insertedZone, inp_WithoutInsertedZone);
+            AppState = collecting; showAppState();
             collectChild();
+            AppState = compiling; showAppState();
             compileChild();
+            AppState = playing; showAppState();
             startChild();
         }
         catch (EvalConsoleError catchedError)
