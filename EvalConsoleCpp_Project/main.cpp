@@ -8,6 +8,7 @@ using namespace std;
 
 
 string appPath;
+const string appName = "Eval Console C++";
 
 fileInfo childFile("childCode.cpp");
 fileInfo childLibsFile("childCode_Libs.cpp");
@@ -16,6 +17,7 @@ fileInfo childCodeFile("childCode_Code.cpp");
 
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
+string nameStateSeparator = " - ";
 
 
 HWND consoleHWND = GetConsoleWindow();
@@ -34,23 +36,23 @@ void showAppState()
 {
     if (AppState == inputing)
     {
-        SetWindowTextA(consoleHWND, "Inputing");
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Inputing").c_str());
     }
     else if (AppState == saving)
     {
-        SetWindowTextA(consoleHWND, "Saving");
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Saving").c_str());
     }
     else if (AppState == collecting)
     {
-        SetWindowTextA(consoleHWND, "Collecting");
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Collecting").c_str());
     }
     else if (AppState == compiling)
     {
-        SetWindowTextA(consoleHWND, "Compiling");
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Compiling").c_str());
     }
     else if (AppState == playing)
     {
-        SetWindowTextA(consoleHWND, "Playing");
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Playing").c_str());
     }
 }
 
@@ -100,15 +102,34 @@ void startChild()
 }
 
 
-string getInsertedZoneFromInput(string& inp)
+struct InputStruct
 {
+    string zone;
+    string content;
+};
+InputStruct dispathInput(string& inp)
+{
+    if (inp[0] == '#')
+        return { "Libs", inp };
+
+    string firstWord;
     for (int i = 0; i < inp.length(); i++)
     {
         if (inp[i] == ' ')
         {
-            return inp.substr(0, i);
+            firstWord = inp.substr(0, i);
+            break;
         }
     }
+    if (checkFile(appPath + "\\childCode_" + firstWord + ".cpp"))
+        return { firstWord, inp.substr(firstWord.length() + 1) };
+
+    if (firstWord == "class" || firstWord == "struct" || firstWord == "namespace" || firstWord == "typedef"
+        || (inp[inp.length() - 1] == ')' && (firstWord == "void" || firstWord == "int" || firstWord == "long" || firstWord == "double" || firstWord == "float" || firstWord == "char"))) //TOFIX
+        return { "Ops", inp };
+
+    if (inp[inp.length() - 1] == ';')
+        return { "Code", inp };
 
     throw EvalConsoleError_WrongZone(inp);
 }
@@ -149,15 +170,14 @@ int main(int argc, char** argv)
     {
         AppState = inputing; showAppState();
         cout << ">>>";
-        string inp;
-        getline(cin, inp);
+        string rawInput;
+        getline(cin, rawInput);
 
         try {
-            string insertedZone = getInsertedZoneFromInput(inp);
-            string inp_WithoutInsertedZone = inp.substr(insertedZone.length() + 1);
+            InputStruct input = dispathInput(rawInput);
 
             AppState = saving; showAppState();
-            insertInZone(insertedZone, inp_WithoutInsertedZone);
+            insertInZone(input.zone, input.content);
             AppState = collecting; showAppState();
             collectChild();
             AppState = compiling; showAppState();
