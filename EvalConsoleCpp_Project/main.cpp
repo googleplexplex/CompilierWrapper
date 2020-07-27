@@ -84,7 +84,7 @@ void compileChild()
     string pathToCompiliedFile = appPath + "\\childCode.cpp";
     string compilierAttributes = "-o " + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode";
     CreateProcessA(compilierPath.c_str(), (char*)((compilierPath + " " + pathToCompiliedFile + " " + compilierAttributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
-    WaitForSingleObject(pi.hThread, INFINITE);
+    WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
 void startChild()
@@ -94,11 +94,7 @@ void startChild()
     PROCESS_INFORMATION pi;
 
     CreateProcessA((appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode.exe").c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
-    WaitForSingleObject(pi.hThread, INFINITE);
-
-    /*string gccBinPath = string("") + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin";
-    string command = gccBinPath + "\\a.exe " + "\"" + gccBinPath + "\"";
-    safetySystem(command);*/
+    WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
 
