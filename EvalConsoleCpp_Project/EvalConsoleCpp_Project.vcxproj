@@ -142,8 +142,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AppState.hpp" />
     <ClInclude Include="EvalConsoleErrors.hpp" />
     <ClInclude Include="FileHelper.hpp" />
+    <ClInclude Include="FooHelper.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

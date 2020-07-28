@@ -48,3 +48,12 @@ public:
     EvalConsoleError_CannotCompileChild()
         : EvalConsoleError(4, string("Cannot compile child")) {};
 };
+
+class EvalConsoleError_WrongTranslatorCommand : public EvalConsoleError
+{
+public:
+    EvalConsoleError_WrongTranslatorCommand(string fileName)
+        : EvalConsoleError(5, string("Wrong translator command \"") + fileName + "\"") {};
+    EvalConsoleError_WrongTranslatorCommand()
+        : EvalConsoleError(5, string("Wrong translator command")) {};
+};

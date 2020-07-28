@@ -4,8 +4,8 @@
 #include <windows.h>
 #include "EvalConsoleErrors.hpp"
 #include "FileHelper.hpp"
+#include "FooHelper.hpp"
 using namespace std;
-
 
 string appPath;
 const string appName = "Eval Console C++";
@@ -19,43 +19,16 @@ string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
 string nameStateSeparator = " - ";
 
+#include "AppState.hpp"
 
-HWND consoleHWND = GetConsoleWindow();
 
-typedef enum AppStatesEnum
+void clearAllChildCode()
 {
-    inputing = 0,
-    saving,
-    collecting,
-    compiling,
-    playing
-};
-AppStatesEnum AppState;
-
-void showAppState()
-{
-    if (AppState == inputing)
-    {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Inputing").c_str());
-    }
-    else if (AppState == saving)
-    {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Saving").c_str());
-    }
-    else if (AppState == collecting)
-    {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Collecting").c_str());
-    }
-    else if (AppState == compiling)
-    {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Compiling").c_str());
-    }
-    else if (AppState == playing)
-    {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Playing").c_str());
-    }
+    clearFile(childLibsFile.absolutePath);
+    clearFile(childOpsFile.absolutePath);
+    clearFile(childCodeFile.absolutePath);
+    clearFile(childFile.absolutePath);
 }
-
 
 void collectChild()
 {
@@ -97,7 +70,6 @@ void startChild()
     WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
-
 struct InputStruct
 {
     string zone;
@@ -108,15 +80,7 @@ InputStruct dispathInput(string& inp)
     if (inp[0] == '#')
         return { "Libs", inp };
 
-    string firstWord;
-    for (int i = 0; i < inp.length(); i++)
-    {
-        if (inp[i] == ' ')
-        {
-            firstWord = inp.substr(0, i);
-            break;
-        }
-    }
+    string firstWord = getWord(inp);
     if (checkFile(appPath + "\\childCode_" + firstWord + ".cpp"))
         return { firstWord, inp.substr(firstWord.length() + 1) };
 
@@ -124,10 +88,26 @@ InputStruct dispathInput(string& inp)
         || (inp[inp.length() - 1] == ')' && (firstWord == "void" || firstWord == "int" || firstWord == "long" || firstWord == "double" || firstWord == "float" || firstWord == "char"))) //TOFIX
         return { "Ops", inp };
 
+    if(firstWord == "using")
+        return { "Libs", inp };
+
     if (inp[inp.length() - 1] == ';')
         return { "Code", inp };
 
     throw EvalConsoleError_WrongZone(inp);
+}
+
+void dispathCommand(string& allCommand)
+{
+    string command = getWord(allCommand);
+
+    if (command == "restart")
+    {
+        clearAllChildCode();
+
+        cout << "<<< All code deleted >>>" << endl;
+    }
+    //else if...
 }
 
 void insertInZone(string& insertedZone, string& insertedStr)
@@ -143,13 +123,6 @@ void insertInZone(string& insertedZone, string& insertedStr)
     insertedZoneFile.close();
 }
 
-void clearAllZones()
-{
-    clearFile(childLibsFile.absolutePath);
-    clearFile(childOpsFile.absolutePath);
-    clearFile(childCodeFile.absolutePath);
-}
-
 
 int main(int argc, char** argv)
 {
@@ -159,17 +132,24 @@ int main(int argc, char** argv)
     childOpsFile.fill(appPath);
     childCodeFile.fill(appPath);
 
-    clearAllZones();
-    clearFile(childFile.absolutePath);
+    clearAllChildCode();
 
     while (true)
     {
         AppState = inputing; showAppState();
         cout << ">>>";
-        string rawInput;
-        getline(cin, rawInput);
+        string rawInput = getlineCin();
 
         try {
+            if (rawInput[0] == '@')
+            {
+                string allCommand = rawInput.substr(1);
+
+                dispathCommand(allCommand);
+
+                continue;
+            }
+
             InputStruct input = dispathInput(rawInput);
 
             AppState = saving; showAppState();
