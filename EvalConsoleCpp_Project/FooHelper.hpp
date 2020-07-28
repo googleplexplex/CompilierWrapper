@@ -10,6 +10,21 @@ string getWord(string& allString, string separator = " ")
         return allString.substr(0, allString.length());
 }
 
+unsigned int getCountOf(string& allString, char counted)
+{
+    unsigned int result = 0;
+
+    for (int i = 0; i < allString.length(); i++)
+    {
+        if (allString[i] == counted)
+        {
+            result++;
+        }
+    }
+
+    return result;
+}
+
 string getlineCin()
 {
     string input;

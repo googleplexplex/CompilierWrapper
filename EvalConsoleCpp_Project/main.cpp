@@ -134,11 +134,12 @@ int main(int argc, char** argv)
 
     clearAllChildCode();
 
+    string rawInput;
     while (true)
     {
         AppState = inputing; showAppState();
         cout << ">>>";
-        string rawInput = getlineCin();
+        rawInput += getlineCin();
 
         try {
             if (rawInput[0] == '@')
@@ -147,8 +148,13 @@ int main(int argc, char** argv)
 
                 dispathCommand(allCommand);
 
+                rawInput = "";
                 continue;
             }
+
+            int openedBlocks = getCountOf(rawInput, '{') - getCountOf(rawInput, '}');
+            if (openedBlocks > 0)
+                continue;
 
             InputStruct input = dispathInput(rawInput);
 
@@ -166,6 +172,7 @@ int main(int argc, char** argv)
             cout << "Error " << catchedError.ID << " - " << catchedError.Description;
         }
 
+        rawInput = "";
         cout << endl;
     }
 
