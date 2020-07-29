@@ -23,7 +23,7 @@ struct fileInfo
     }
 };
 
-void copyFileInStream(const string& fileName, ofstream& stream)
+void copyFileInStream(const string& fileName, ostream& stream)
 {
     string line;
     ifstream file(fileName);
@@ -43,6 +43,29 @@ void clearFile(const string& fileName)
     childCode_Libs.close();
 }
 
+void clearLastLineFile(const string& fileName)
+{
+    ifstream readedFile;
+    string allFile;
+    string presentLine;
+    readedFile.open(fileName);
+    while (true)
+    {
+        getline(readedFile, presentLine);
+
+        if (readedFile.eof())
+            break;
+
+        allFile += presentLine;
+    }
+    allFile = allFile.substr(allFile.length() - presentLine.length());
+    readedFile.close();
+
+    ofstream writedFile(fileName);
+    writedFile << allFile;
+    writedFile.close();
+}
+
 string getAppPath(const string pathToOpenedExes)
 {
     for (int i = pathToOpenedExes.length(); ; i--)
@@ -59,14 +82,26 @@ string getAppPath(const string pathToOpenedExes)
     return "";
 }
 
-bool checkFile(const string file_name)
+bool checkFile(const string fileName)
 {
     ifstream file;
-    file.open(file_name);
+    file.open(fileName);
 
     bool result = file.is_open();
 
     file.close();
 
     return result;
+}
+
+void outputFile(const string fileName)
+{
+    string line;
+    ifstream file(fileName);
+    while (!file.eof())
+    {
+        getline(file, line);
+        cout << line << endl;
+    }
+    file.close();
 }

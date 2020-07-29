@@ -14,12 +14,14 @@ fileInfo childFile("childCode.cpp");
 fileInfo childLibsFile("childCode_Libs.cpp");
 fileInfo childOpsFile("childCode_Ops.cpp");
 fileInfo childCodeFile("childCode_Code.cpp");
+void clearAllChildCode();
 
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
 string nameStateSeparator = " - ";
 
 #include "AppState.hpp"
+#include "TranslatorCommands.hpp"
 
 
 void clearAllChildCode()
@@ -28,6 +30,19 @@ void clearAllChildCode()
     clearFile(childOpsFile.absolutePath);
     clearFile(childCodeFile.absolutePath);
     clearFile(childFile.absolutePath);
+}
+
+void insertInZone(string& insertedZone, string& insertedStr)
+{
+    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
+
+    if (!checkFile(insertedZoneFileName))
+        throw EvalConsoleError_WrongZone(insertedZone);
+
+    ofstream insertedZoneFile;
+    insertedZoneFile.open(insertedZoneFileName, ios::app);
+    insertedZoneFile << insertedStr << endl;
+    insertedZoneFile.close();
 }
 
 void collectChild()
@@ -95,32 +110,6 @@ InputStruct dispathInput(string& inp)
         return { "Code", inp };
 
     throw EvalConsoleError_WrongZone(inp);
-}
-
-void dispathCommand(string& allCommand)
-{
-    string command = getWord(allCommand);
-
-    if (command == "restart")
-    {
-        clearAllChildCode();
-
-        cout << "<<< All code deleted >>>" << endl;
-    }
-    //else if...
-}
-
-void insertInZone(string& insertedZone, string& insertedStr)
-{
-    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
-
-    if(!checkFile(insertedZoneFileName))
-        throw EvalConsoleError_WrongZone(insertedZone);
-
-    ofstream insertedZoneFile;
-    insertedZoneFile.open(insertedZoneFileName, ios::app);
-    insertedZoneFile << insertedStr << endl;
-    insertedZoneFile.close();
 }
 
 
