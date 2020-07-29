@@ -1,6 +1,8 @@
 #pragma once
 #include <vector>
 
+bool showDispathedZone = true;
+
 
 void reset(string&)
 {
@@ -34,13 +36,24 @@ void backupZone(string& zoneName)
     clearLastLineFile(insertedZoneFileName);
 }
 
+void changeDispathResultShow(string& val)
+{
+    if (val == "show")
+        showDispathedZone = true;
+    else if(val == "hide")
+        showDispathedZone = false;
+    else
+        throw EvalConsoleError_WrongZone(val);
+}
+
 
 typedef void(*commandProc)(string&);
 vector<pair<string, commandProc>> translatorCommands = {
     { "reset", reset },
     { "show all code", showAllCode },
     { "show zone", showZone },
-    { "backup zone", backupZone }
+    { "backup zone", backupZone },
+    { "dispathed zone", changeDispathResultShow }
     //...
 };
 

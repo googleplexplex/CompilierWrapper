@@ -146,6 +146,8 @@ int main(int argc, char** argv)
                 continue;
 
             InputStruct input = dispathInput(rawInput);
+            if (showDispathedZone)
+                cout << "(Dispathed to Zone " << input.zone << ")" << endl;
 
             AppState = saving; showAppState();
             insertInZone(input.zone, input.content);
