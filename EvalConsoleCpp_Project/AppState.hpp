@@ -1,7 +1,5 @@
 #pragma once
 
-HWND consoleHWND = GetConsoleWindow();
-
 typedef enum AppStatesEnum
 {
     inputing = 0,

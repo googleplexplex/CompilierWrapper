@@ -20,7 +20,10 @@ string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
 string nameStateSeparator = " - ";
 
+HWND consoleHWND = GetConsoleWindow();
+
 #include "AppState.hpp"
+#include "ColorsHelper.hpp"
 #include "TranslatorCommands.hpp"
 
 
@@ -126,11 +129,14 @@ int main(int argc, char** argv)
     string rawInput;
     while (true)
     {
+        setTranslatorOutputColor();
         AppState = inputing; showAppState();
         cout << ">>>";
+        setInputColor();
         rawInput += getlineCin();
 
         try {
+            setTranslatorOutputColor();
             if (rawInput[0] == '@')
             {
                 string allCommand = rawInput.substr(1);
@@ -155,14 +161,17 @@ int main(int argc, char** argv)
             collectChild();
             AppState = compiling; showAppState();
             compileChild();
+            setChildOutputColor();
             AppState = playing; showAppState();
             startChild();
         }
         catch (EvalConsoleError catchedError)
         {
+            setTranslatorOutputColor();
             cout << "Error " << catchedError.ID << " - " << catchedError.Description;
         }
 
+        setTranslatorOutputColor();
         rawInput = "";
         cout << endl;
     }
