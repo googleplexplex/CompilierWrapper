@@ -158,9 +158,12 @@ void launchStartScript()
         }
         catch (EvalConsoleError catchedError)
         {
-            setTranslatorOutputColor();
-            cout << "Error " << catchedError.ID << " - " << catchedError.Description << endl;
-            setTranslatorOutputColor();
+            if (showErrors)
+            {
+                setTranslatorOutputColor();
+                cout << "Error " << catchedError.ID << " - " << catchedError.Description << endl;
+                setTranslatorOutputColor();
+            }
         }
     }
     startScriptStream.close();
@@ -207,8 +210,11 @@ int main(int argc, char** argv)
         }
         catch (EvalConsoleError catchedError)
         {
-            setTranslatorOutputColor();
-            cout << "Error " << catchedError.ID << " - " << catchedError.Description;
+            if (showErrors)
+            {
+                setTranslatorOutputColor();
+                cout << "Error " << catchedError.ID << " - " << catchedError.Description;
+            }
         }
         inputCache = "";
 
