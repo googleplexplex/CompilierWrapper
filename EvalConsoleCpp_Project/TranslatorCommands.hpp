@@ -245,6 +245,70 @@ void deleteStartScript(vector<string> args)
         cout << "<<< Start script deleted >>>" << endl;
 }
 
+void help(vector<string>)
+{
+    cout << "---Zones:" << endl;
+
+    cout << "Libs - This zone stores work with import of libraries and preprocessor" << endl;
+    cout << "Ops - This zone stores definitions (classes, functions and structures, etc)" << endl;
+    cout << "Code - This zone stores function calls, working with variables and other executable code" << endl;
+
+
+    cout << "---Input structure example:" << endl;
+
+    cout << "--Explicit zone indication" << endl;
+    cout << "Libs #include <iostream>" << endl;
+    cout << "^    ^" << endl;
+    cout << "Zone Code" << endl;
+
+    cout << "--Implicit zone specification example" << endl;
+    cout << "#include <iostream>" << endl;
+    cout << "^" << endl;
+    cout << "Found # at the beginning, which means working with a preprocessor or importing a library. Distributed in Libs" << endl;
+
+
+    cout << "---All translator commands:" << endl;
+
+    cout << "reset - Reset all the code written into the translator before" << endl;
+    cout << "play - Play written code" << endl;
+    cout << "echo - Configures echo of translators" << endl;
+    cout << "dispatched zone - Hides / displays the output of the zone where the code is placed" << endl;
+
+    cout << "show all code - Show all code" << endl;
+    cout << "show zone - Show zone" << endl;
+    cout << "backup zone - Delete last line in zone" << endl;
+    cout << "delete all code - Reset all the code written into the translator before" << endl;
+    cout << "delete zone - Reset all the code written into the zone before" << endl;
+
+    cout << "show start script - Show start script" << endl;
+    cout << "backup start script - Delete last line in start script" << endl;
+    cout << "add to start script - Add string in start script" << endl;
+    cout << "delete start script - Delete start script" << endl;
+
+    cout << "set code output color - Set code output color" << endl;
+    cout << "set translator output color - Set translator output color" << endl;
+    cout << "set input color - Set input color" << endl;
+
+
+    cout << "---Colors names:" << endl;
+
+    cout << "black" << endl;
+    cout << "blue" << endl;
+    cout << "green" << endl;
+    cout << "aqua" << endl;
+    cout << "red" << endl;
+    cout << "violet" << endl;
+    cout << "yellow" << endl;
+    cout << "white" << endl;
+    cout << "gray" << endl;
+    cout << "brightBlue" << endl;
+    cout << "brightGreen" << endl;
+    cout << "brightAqua" << endl;
+    cout << "brightRed" << endl;
+    cout << "brightViolet" << endl;
+    cout << "brightYellow" << endl;
+    cout << "brightWhite" << endl;
+}
 
 
 typedef void(*commandProc)(vector<string>);

@@ -28,6 +28,16 @@ HWND consoleHWND = GetConsoleWindow();
 #include "TranslatorCommands.hpp"
 
 
+void showStartMessage()
+{
+    if (showTranslatorMessages)
+    {
+        setTranslatorOutputColor();
+
+        cout << "Eval Console C++, Version 1.0." << endl;
+    }
+}
+
 void clearAllChildCode()
 {
     clearFile(childLibsFile.absolutePath);
@@ -182,6 +192,8 @@ int main(int argc, char** argv)
     setTranslatorOutputColor();
     clearAllChildCode();
     launchStartScript();
+
+    showStartMessage();
 
     string inputCache;
     while (true)
