@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="AppState.hpp" />
     <ClInclude Include="ColorsHelper.hpp" />
+    <ClInclude Include="CompilierHelper.hpp" />
     <ClInclude Include="EvalConsoleErrors.hpp" />
     <ClInclude Include="FileHelper.hpp" />
     <ClInclude Include="FooHelper.hpp" />

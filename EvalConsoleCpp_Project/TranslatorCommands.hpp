@@ -4,6 +4,7 @@
 bool showDispathedZone = true;
 bool showErrors = true;
 bool showTranslatorMessages = true;
+string compilier = "gcc";
 
 vector<string> getArgs(string allArgs)
 {
@@ -315,6 +316,17 @@ void help(vector<string>)
     cout << endl << "Official App GitHub link - https://github.com/googleplexplex/EvalConsoleCpp.git" << endl;
 }
 
+void setCompilier(vector<string> arg)
+{
+    if (arg[0] == "gcc" || arg[0] == "clang")
+        compilier = arg[0];
+    else
+        throw EvalConsoleError_WrongTranslatorCommand(arg[0]);
+
+    if (showTranslatorMessages)
+        cout << "<<< Compilier changed >>>" << endl;
+}
+
 
 typedef void(*commandProc)(vector<string>);
 vector<pair<string, commandProc>> translatorCommands = {
@@ -323,6 +335,7 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "echo", setEchoMode },
     { "dispatched zone", changeDispathResultShow },
     { "help", help },
+    { "set compilier", setCompilier},
 
     { "show all code", showAllCode },
     { "show zone", showZone },

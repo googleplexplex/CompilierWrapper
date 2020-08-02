@@ -16,6 +16,7 @@ fileInfo childOpsFile("childCode_Ops.cpp");
 fileInfo childCodeFile("childCode_Code.cpp");
 void clearAllChildCode();
 fileInfo startScript("startScript.txt");
+string pathToCompiliedFile;
 
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
@@ -26,6 +27,7 @@ HWND consoleHWND = GetConsoleWindow();
 #include "AppState.hpp"
 #include "ColorsHelper.hpp"
 #include "TranslatorCommands.hpp"
+#include "CompilierHelper.hpp"
 
 
 void showStartMessage()
@@ -83,10 +85,7 @@ void compileChild()
     ZeroMemory(&cif, sizeof(STARTUPINFO));
     PROCESS_INFORMATION pi;
 
-    string compilierPath = appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\g++.exe";
-    string pathToCompiliedFile = appPath + "\\childCode.cpp";
-    string compilierAttributes = "-o " + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode";
-    CreateProcessA(compilierPath.c_str(), (char*)((compilierPath + " " + pathToCompiliedFile + " " + compilierAttributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    CreateProcessA(usedCompilier.absolutePathToCompilier.c_str(), (char*)((usedCompilier.absolutePathToCompilier + " " + pathToCompiliedFile + " " + usedCompilier.attributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
     WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
@@ -96,7 +95,7 @@ void startChild()
     ZeroMemory(&cif, sizeof(STARTUPINFO));
     PROCESS_INFORMATION pi;
 
-    CreateProcessA((appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode.exe").c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    CreateProcessA(usedCompilier.absolutePathToCompiliedEXE.c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
     WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
@@ -189,6 +188,14 @@ int main(int argc, char** argv)
     childOpsFile.fill(appPath);
     childCodeFile.fill(appPath);
     startScript.fill(appPath);
+
+    pathToCompiliedFile = appPath + "\\childCode.cpp";
+    gcc = { appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\g++.exe",
+        appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode.exe",
+        "-o " + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode" };
+    clang = { appPath + "\\Compiliers\\LLVM\\bin\\clang++.exe",
+        appPath + "\\Compiliers\\LLVM\\bin\\childCode.exe",
+        "-o " + appPath + "\\Compiliers\\LLVM\\bin\\childCode" };
 
     setTranslatorOutputColor();
     clearAllChildCode();
