@@ -209,6 +209,8 @@ void setEchoMode(vector<string> args)
         cout << "<<< Echo mode edited >>>" << endl;
 }
 
+
+void startChild();
 void play(vector<string>)
 {
     startChild();
@@ -308,6 +310,9 @@ void help(vector<string>)
     cout << "brightViolet" << endl;
     cout << "brightYellow" << endl;
     cout << "brightWhite" << endl;
+
+
+    cout << endl << "Official App GitHub link - https://github.com/googleplexplex/EvalConsoleCpp.git" << endl;
 }
 
 
@@ -317,6 +322,7 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "play", play },
     { "echo", setEchoMode },
     { "dispatched zone", changeDispathResultShow },
+    { "help", help },
 
     { "show all code", showAllCode },
     { "show zone", showZone },

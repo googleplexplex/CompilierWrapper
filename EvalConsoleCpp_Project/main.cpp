@@ -34,7 +34,8 @@ void showStartMessage()
     {
         setTranslatorOutputColor();
 
-        cout << "Eval Console C++, Version 1.0." << endl;
+        cout << "Eval Console C++, Version 1.0." << endl
+            << "(Type @help to get help)" << endl;
     }
 }
 
