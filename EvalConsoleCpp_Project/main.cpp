@@ -26,8 +26,8 @@ HWND consoleHWND = GetConsoleWindow();
 
 #include "AppState.hpp"
 #include "ColorsHelper.hpp"
-#include "TranslatorCommands.hpp"
 #include "CompilierHelper.hpp"
+#include "TranslatorCommands.hpp"
 
 
 void showStartMessage()

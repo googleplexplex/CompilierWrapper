@@ -327,6 +327,14 @@ void setCompilier(vector<string> arg)
         cout << "<<< Compilier changed >>>" << endl;
 }
 
+void setAttributes(vector<string> arg)
+{
+    usedCompilier.attributes = arg[0];
+
+    if (showTranslatorMessages)
+        cout << "<<< Compilier attributes changed >>>" << endl;
+}
+
 
 typedef void(*commandProc)(vector<string>);
 vector<pair<string, commandProc>> translatorCommands = {
@@ -336,6 +344,7 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "dispatched zone", changeDispathResultShow },
     { "help", help },
     { "set compilier", setCompilier},
+    { "set attributes", setAttributes},
 
     { "show all code", showAllCode },
     { "show zone", showZone },
