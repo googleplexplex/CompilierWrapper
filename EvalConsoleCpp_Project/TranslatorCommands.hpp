@@ -209,22 +209,66 @@ void setEchoMode(vector<string> args)
         cout << "<<< Echo mode edited >>>" << endl;
 }
 
+void play(vector<string>)
+{
+    startChild();
+}
+
+void deleteAllCode(vector<string>)
+{
+    clearAllChildCode();
+
+    if (showTranslatorMessages)
+        cout << "<<< All code deleted >>>" << endl;
+}
+
+void deleteZone(vector<string> arg)
+{
+    if(arg[0] == "Libs")
+        clearFile(childLibsFile.absolutePath);
+    else if (arg[0] == "Ops")
+        clearFile(childOpsFile.absolutePath);
+    else if (arg[0] == "Code")
+        clearFile(childCodeFile.absolutePath);
+    else
+        throw EvalConsoleError_WrongTranslatorCommand(arg[0]);
+
+    if (showTranslatorMessages)
+        cout << "<<< Zone" << arg[0] << " deleted >>>" << endl;
+}
+
+void deleteStartScript(vector<string> args)
+{
+    clearFile(startScript.absolutePath);
+
+    if (showTranslatorMessages)
+        cout << "<<< Start script deleted >>>" << endl;
+}
+
 
 
 typedef void(*commandProc)(vector<string>);
 vector<pair<string, commandProc>> translatorCommands = {
     { "reset", reset },
+    { "play", play },
+    { "echo", setEchoMode },
+    { "dispatched zone", changeDispathResultShow },
+
     { "show all code", showAllCode },
     { "show zone", showZone },
     { "backup zone", backupZone },
-    { "dispathed zone", changeDispathResultShow },
-    { "set code output color", setChildCodeOutputColor },
-    { "set translator output color", setTranslatorOutputColor },
-    { "set input color", setInputColor },
+    { "delete all code", deleteAllCode },
+    { "delete zone", deleteZone },
+
     { "show start script", showStartScript },
     { "backup start script", backupStartScript },
     { "add to start script", addToStartScript },
-    { "echo", setEchoMode }
+    { "delete start script", deleteStartScript },
+
+    { "set code output color", setChildCodeOutputColor },
+    { "set translator output color", setTranslatorOutputColor },
+    { "set input color", setInputColor }
+
     //...
 };
 
