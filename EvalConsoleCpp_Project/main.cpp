@@ -15,6 +15,7 @@ fileInfo childLibsFile("childCode_Libs.cpp");
 fileInfo childOpsFile("childCode_Ops.cpp");
 fileInfo childCodeFile("childCode_Code.cpp");
 void clearAllChildCode();
+fileInfo startScript("startScript.txt");
 
 string beforeCode = "int main(int argc, char* argv[])\n{\n";
 string afterCode = "return 0;\n}\n";
@@ -115,6 +116,56 @@ InputStruct dispathInput(string& inp)
     throw EvalConsoleError_WrongZone(inp);
 }
 
+void eval(string& codeString)
+{
+    InputStruct input = dispathInput(codeString);
+    if (showDispathedZone)
+        cout << "(Dispathed to Zone " << input.zone << ")" << endl;
+
+    AppState = saving; showAppState();
+    insertInZone(input.zone, input.content);
+    AppState = collecting; showAppState();
+    collectChild();
+    AppState = compiling; showAppState();
+    compileChild();
+    setChildOutputColor();
+    AppState = playing; showAppState();
+    startChild();
+}
+
+void launchStartScript()
+{
+    if (!checkFile(startScript.absolutePath))
+    {
+        cout << "(Start Script not found)" << endl;
+        return;
+    }
+
+    string line;
+    ifstream startScriptStream(startScript.absolutePath);
+    while (!startScriptStream.eof())
+    {
+        getline(startScriptStream, line);
+
+        if (line == "")
+            continue;
+
+        try {
+            if(line[0] != '@')
+                eval(line);
+            else
+                dispathCommand(line.substr(1));
+        }
+        catch (EvalConsoleError catchedError)
+        {
+            setTranslatorOutputColor();
+            cout << "Error " << catchedError.ID << " - " << catchedError.Description << endl;
+            setTranslatorOutputColor();
+        }
+    }
+    startScriptStream.close();
+}
+
 
 int main(int argc, char** argv)
 {
@@ -123,56 +174,45 @@ int main(int argc, char** argv)
     childLibsFile.fill(appPath);
     childOpsFile.fill(appPath);
     childCodeFile.fill(appPath);
+    startScript.fill(appPath);
 
+    setTranslatorOutputColor();
     clearAllChildCode();
+    launchStartScript();
 
-    string rawInput;
+    string inputCache;
     while (true)
     {
         setTranslatorOutputColor();
         AppState = inputing; showAppState();
         cout << ">>>";
         setInputColor();
-        rawInput += getlineCin();
+        string rawInput = getlineCin();
 
         try {
             setTranslatorOutputColor();
             if (rawInput[0] == '@')
             {
                 string allCommand = rawInput.substr(1);
-
                 dispathCommand(allCommand);
-
-                rawInput = "";
                 continue;
             }
 
-            int openedBlocks = getCountOf(rawInput, '{') - getCountOf(rawInput, '}');
+            inputCache += rawInput;
+            int openedBlocks = getCountOf(inputCache, '{') - getCountOf(inputCache, '}');
             if (openedBlocks > 0)
                 continue;
 
-            InputStruct input = dispathInput(rawInput);
-            if (showDispathedZone)
-                cout << "(Dispathed to Zone " << input.zone << ")" << endl;
-
-            AppState = saving; showAppState();
-            insertInZone(input.zone, input.content);
-            AppState = collecting; showAppState();
-            collectChild();
-            AppState = compiling; showAppState();
-            compileChild();
-            setChildOutputColor();
-            AppState = playing; showAppState();
-            startChild();
+            eval(inputCache);
         }
         catch (EvalConsoleError catchedError)
         {
             setTranslatorOutputColor();
             cout << "Error " << catchedError.ID << " - " << catchedError.Description;
         }
+        inputCache = "";
 
         setTranslatorOutputColor();
-        rawInput = "";
         cout << endl;
     }
 

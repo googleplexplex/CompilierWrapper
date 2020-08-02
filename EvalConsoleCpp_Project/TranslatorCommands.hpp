@@ -110,6 +110,33 @@ void setInputColor(vector<string> args)
     }
 }
 
+void showStartScript(vector<string>)
+{
+    if (!checkFile(startScript.absolutePath))
+        throw EvalConsoleError_CannotOpenFile(startScript.name);
+
+    outputFile(startScript.absolutePath);
+}
+
+void backupStartScript(vector<string>)
+{
+    if (!checkFile(startScript.absolutePath))
+        throw EvalConsoleError_CannotOpenFile(startScript.name);
+
+    clearLastLineFile(startScript.absolutePath);
+}
+
+void addToStartScript(vector<string> args)
+{
+    ofstream insertedstartScriptStream;
+    insertedstartScriptStream.open(startScript.absolutePath, ios::app);
+    for (int i = 0; i < args.size(); i++)
+    {
+        insertedstartScriptStream << args[i] << endl;
+    }
+    insertedstartScriptStream.close();
+}
+
 
 
 typedef void(*commandProc)(vector<string>);
@@ -121,11 +148,14 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "dispathed zone", changeDispathResultShow },
     { "set code output color", setChildCodeOutputColor },
     { "set translator output color", setTranslatorOutputColor },
-    { "set input color", setInputColor }
+    { "set input color", setInputColor },
+    { "show start script", showStartScript },
+    { "backup start script", backupStartScript },
+    { "add to start script", addToStartScript }
     //...
 };
 
-void dispathCommand(string& allCommand)
+void dispathCommand(string allCommand)
 {
     for (int i = 0; i < translatorCommands.size(); i++)
     {
@@ -142,6 +172,8 @@ void dispathCommand(string& allCommand)
             }
 
             translatorCommands[i].second(commandArgs);
+
+            return;
         }
     }
 }
