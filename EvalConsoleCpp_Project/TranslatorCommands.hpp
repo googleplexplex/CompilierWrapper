@@ -318,21 +318,79 @@ void help(vector<string>)
 
 void setCompilier(vector<string> arg)
 {
-    if (arg[0] == "gcc" || arg[0] == "clang")
-        compilier = arg[0];
-    else
-        throw EvalConsoleError_WrongTranslatorCommand(arg[0]);
+    if (arg.size() == 0)
+        throw EvalConsoleError_WrongTranslatorCommand();
+
+    string settedCompilierName = arg[0];
+
+    for (int i = 0; i < compiliers.size(); i++)
+    {
+        if (compiliers[i].name == settedCompilierName)
+        {
+            usedNowCompilier = &(compiliers[i]);
+
+            if (showTranslatorMessages)
+                cout << "<<< Compilier " << settedCompilierName << " setted >>>" << endl;
+
+            return;
+        }
+    }
 
     if (showTranslatorMessages)
-        cout << "<<< Compilier changed >>>" << endl;
+        cout << "<<< Compilier " << settedCompilierName << " not found >>>" << endl;
 }
 
 void setAttributes(vector<string> arg)
 {
-    usedCompilier.attributes = arg[0];
+    usedNowCompilier->attributes = arg[0];
 
     if (showTranslatorMessages)
         cout << "<<< Compilier attributes changed >>>" << endl;
+}
+
+void addCompilier(vector<string> args)
+{
+    if(args.size() != 4)
+        throw EvalConsoleError_WrongTranslatorCommand();
+
+    compilierInfo addedCompilier = { args[0], args[1], args[2], args[3] };
+
+    compiliers.push_back(addedCompilier);
+
+    if (showTranslatorMessages)
+        cout << "<<< Compilier " << addedCompilier.name << " added >>>" << endl;
+}
+
+void deleteCompilier(vector<string> arg)
+{
+    if(arg.size() == 0)
+        throw EvalConsoleError_WrongTranslatorCommand();
+    
+    string deletedCompilierName = arg[0];
+
+    for (int i = 0; i < compiliers.size(); i++)
+    {
+        if (compiliers[i].name == deletedCompilierName)
+        {
+            compiliers.erase(compiliers.begin() + i);
+
+            if (showTranslatorMessages)
+                cout << "<<< Compilier " << deletedCompilierName << " deleted >>>" << endl;
+
+            return;
+        }
+    }
+
+    if (showTranslatorMessages)
+        cout << "<<< Compilier " << deletedCompilierName << " not found >>>" << endl;
+}
+
+void showCompiliers(vector<string>)
+{
+    for (int i = 0; i < compiliers.size(); i++)
+    {
+        cout << compiliers[i].name << endl;
+    }
 }
 
 
@@ -343,8 +401,12 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "echo", setEchoMode },
     { "dispatched zone", changeDispathResultShow },
     { "help", help },
+
     { "set compilier", setCompilier},
     { "set attributes", setAttributes},
+    { "add compilier", addCompilier},
+    { "delete compilier", deleteCompilier},
+    { "show compiliers", showCompiliers},
 
     { "show all code", showAllCode },
     { "show zone", showZone },

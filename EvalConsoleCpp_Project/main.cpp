@@ -85,7 +85,7 @@ void compileChild()
     ZeroMemory(&cif, sizeof(STARTUPINFO));
     PROCESS_INFORMATION pi;
 
-    CreateProcessA(usedCompilier.absolutePathToCompilier.c_str(), (char*)((usedCompilier.absolutePathToCompilier + " " + pathToCompiliedFile + " " + usedCompilier.attributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    CreateProcessA(usedNowCompilier->absolutePathToCompilier.c_str(), (char*)((usedNowCompilier->absolutePathToCompilier + " " + pathToCompiliedFile + " " + usedNowCompilier->attributes).c_str()), NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
     WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
@@ -95,7 +95,7 @@ void startChild()
     ZeroMemory(&cif, sizeof(STARTUPINFO));
     PROCESS_INFORMATION pi;
 
-    CreateProcessA(usedCompilier.absolutePathToCompiliedEXE.c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
+    CreateProcessA(usedNowCompilier->absolutePathToCompiliedEXE.c_str(), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &cif, &pi);
     WaitForSingleObject(pi.hProcess, INFINITE);
 }
 
@@ -188,14 +188,11 @@ int main(int argc, char** argv)
     childOpsFile.fill(appPath);
     childCodeFile.fill(appPath);
     startScript.fill(appPath);
-
     pathToCompiliedFile = appPath + "\\childCode.cpp";
-    gcc = { appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\g++.exe",
-        appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode.exe",
-        "-o " + appPath + "\\Compiliers\\x86_64-8.1.0-win32-seh-rt_v6-rev0\\mingw64\\bin\\childCode" };
-    clang = { appPath + "\\Compiliers\\LLVM\\bin\\clang++.exe",
-        appPath + "\\Compiliers\\LLVM\\bin\\childCode.exe",
-        "-o " + appPath + "\\Compiliers\\LLVM\\bin\\childCode" };
+    
+    addGCCCompilierStandartPathes();
+    addClangCompilierStandartPathes();
+    usedNowCompilier = &(compiliers[0]);
 
     setTranslatorOutputColor();
     clearAllChildCode();
