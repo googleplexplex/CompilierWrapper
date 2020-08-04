@@ -1,11 +1,13 @@
 #pragma once
 #include <windows.h>
 #define setCursorBegin() setTo(0, 0)
+#define enumInc(enumName, valName) valName = enumName(int(valName) + 1)
 
 HANDLE stdHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
 typedef enum symbolColor {
 	null = -1,
+	colorsEnumBegin = 0,
 	black = 0,
 	blue,
 	green,
@@ -22,7 +24,9 @@ typedef enum symbolColor {
 	brightViolet,
 	brightYellow,
 	brightWhite,
+	colorsEnumEnd
 };
+#define symbolColorEnumInc(val) enumInc(symbolColor, val)
 
 #define ifret(str, val) if (str == #val) return val
 symbolColor stingIsColor(string& str)
@@ -43,6 +47,29 @@ symbolColor stingIsColor(string& str)
 	ifret(str, brightYellow); else
 	ifret(str, brightWhite); else
 	return null;
+}
+
+string toString(symbolColor color)
+{
+	switch (color)
+	{
+	case black: return "black";
+	case blue: return "blue";
+	case green: return "green";
+	case aqua: return "aqua";
+	case red: return "red";
+	case violet: return "violet";
+	case yellow: return "yellow";
+	case white: return "white";
+	case brightBlue: return "brightBlue";
+	case brightGreen: return "brightGreen";
+	case brightAqua: return "brightAqua";
+	case brightRed: return "brightRed";
+	case brightViolet: return "brightViolet";
+	case brightYellow: return "brightYellow";
+	case brightWhite: return "brightWhite";
+	default: return "";
+	}
 }
 
 
@@ -88,4 +115,23 @@ void setInputColor()
 {
 	presentTextAttribute = inputColor;
 	SetConsoleTextAttribute(stdHandle, presentTextAttribute);
+}
+
+
+void outputColorWithName(symbolColor color)
+{
+	setSymbolColor(color, black);
+	cout << toString(color) << endl;
+}
+
+void outputAllColorsWithName()
+{
+	symbolColor startSymbolColor = presentTextAttribute;
+
+	for (symbolColor i = colorsEnumBegin; i < colorsEnumEnd; symbolColorEnumInc(i))
+	{
+		outputColorWithName(i);
+	}
+
+	setSymbolColor(startSymbolColor, black);
 }

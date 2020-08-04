@@ -26,7 +26,7 @@ void showAppState()
     }
     else if (AppState == compiling)
     {
-        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Compiling").c_str());
+        SetWindowTextA(consoleHWND, (appName + nameStateSeparator + "Compiling with " + usedNowCompilier->name).c_str());
     }
     else if (AppState == playing)
     {

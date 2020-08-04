@@ -24,9 +24,9 @@ string nameStateSeparator = " - ";
 
 HWND consoleHWND = GetConsoleWindow();
 
-#include "AppState.hpp"
 #include "ColorsHelper.hpp"
 #include "CompilierHelper.hpp"
+#include "AppState.hpp"
 #include "TranslatorCommands.hpp"
 
 
