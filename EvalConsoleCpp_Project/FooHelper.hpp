@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+#include <vector>
 
 string getWord(string& allString, string separator = " ")
 {
@@ -30,4 +32,19 @@ string getlineCin()
     string input;
     getline(cin, input);
     return input;
+}
+
+string vectorToString(vector<string>& stringsVector, string separator = " ")
+{
+    string result;
+
+    for (int i = 0; i < stringsVector.size(); i++)
+    {
+        result += stringsVector[i];
+
+        if (i + 1 != stringsVector.size())
+            result += separator;
+    }
+
+    return result;
 }

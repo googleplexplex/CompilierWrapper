@@ -49,19 +49,6 @@ void clearAllChildCode()
     clearFile(childFile.absolutePath);
 }
 
-void insertInZone(string& insertedZone, string& insertedStr)
-{
-    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
-
-    if (!checkFile(insertedZoneFileName))
-        throw EvalConsoleError_WrongZone(insertedZone);
-
-    ofstream insertedZoneFile;
-    insertedZoneFile.open(insertedZoneFileName, ios::app);
-    insertedZoneFile << insertedStr << endl;
-    insertedZoneFile.close();
-}
-
 void collectChild()
 {
     string line;
@@ -133,7 +120,9 @@ void eval(string& codeString)
         cout << "(Dispathed to Zone " << input.zone << ")" << endl;
 
     AppState = saving; showAppState();
-    insertInZone(input.zone, input.content);
+    vector<string> addToZoneArgs = { input.zone, input.content };
+    addToZone(addToZoneArgs);
+
     AppState = collecting; showAppState();
     collectChild();
     AppState = compiling; showAppState();
@@ -141,6 +130,18 @@ void eval(string& codeString)
     setChildOutputColor();
     AppState = playing; showAppState();
     startChild();
+}
+
+void metaEval(string& dispathed)
+{
+    setTranslatorOutputColor();
+
+    if (dispathed[0] == '@')
+        dispathCommand(dispathed.substr(1));
+    else
+        eval(dispathed);
+
+    setStandartSymbolsColor();
 }
 
 void launchStartScript()
@@ -210,20 +211,12 @@ int main(int argc, char** argv)
         string rawInput = getlineCin();
 
         try {
-            setTranslatorOutputColor();
-            if (rawInput[0] == '@')
-            {
-                string allCommand = rawInput.substr(1);
-                dispathCommand(allCommand);
-                continue;
-            }
-
             inputCache += rawInput;
             int openedBlocks = getCountOf(inputCache, '{') - getCountOf(inputCache, '}');
             if (openedBlocks > 0)
                 continue;
 
-            eval(inputCache);
+            metaEval(inputCache);
         }
         catch (EvalConsoleError catchedError)
         {

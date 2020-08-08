@@ -400,6 +400,23 @@ void showCompiliers(vector<string>)
     }
 }
 
+void addToZone(vector<string> args)
+{
+    string insertedZone = args[0];
+    args.erase(args.begin());
+    string insertedContent = vectorToString(args);
+
+    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
+
+    if (!checkFile(insertedZoneFileName))
+        throw EvalConsoleError_WrongZone(insertedZone);
+
+    ofstream insertedZoneFile;
+    insertedZoneFile.open(insertedZoneFileName, ios::app);
+    insertedZoneFile << insertedContent << endl;
+    insertedZoneFile.close();
+}
+
 
 typedef void(*commandProc)(vector<string>);
 vector<pair<string, commandProc>> translatorCommands = {
@@ -420,6 +437,7 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "backup zone", backupZone },
     { "delete all code", deleteAllCode },
     { "delete zone", deleteZone },
+    { "add to zone", addToZone },
 
     { "show start script", showStartScript },
     { "backup start script", backupStartScript },
@@ -429,8 +447,6 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "set code output color", setChildCodeOutputColor },
     { "set translator output color", setTranslatorOutputColor },
     { "set input color", setInputColor }
-
-    //...
 };
 
 void dispathCommand(string allCommand)
@@ -445,8 +461,8 @@ void dispathCommand(string allCommand)
                 commandArgs.push_back("");
             else
             {
-                string undisppatcheredArgs = allCommand.substr(translatorCommands[i].first.length() + 1);
-                commandArgs = getArgs(undisppatcheredArgs);
+                string undispatcheredArgs = allCommand.substr(translatorCommands[i].first.length() + 1);
+                commandArgs = getArgs(undispatcheredArgs);
             }
 
             translatorCommands[i].second(commandArgs);
