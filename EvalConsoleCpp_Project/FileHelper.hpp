@@ -5,6 +5,9 @@
 #include "EvalConsoleErrors.hpp"
 using namespace std;
 
+bool checkFile(const string fileName);
+void createFile(const string fileName);
+
 struct fileInfo
 {
     string name;
@@ -20,6 +23,17 @@ struct fileInfo
     {
         absolutePath = pathToFile + "\\" + name;
         relativePath = name;
+    }
+
+    void checkCallable()
+    {
+        if (!checkFile(absolutePath))
+        {
+            createFile(absolutePath);
+
+            if (!checkFile(absolutePath))
+                throw new EvalConsoleError_CannotOpenFile(relativePath);
+        }
     }
 };
 
@@ -39,8 +53,8 @@ void copyFileInStream(const string& fileName, ostream& stream)
 
 void clearFile(const string& fileName)
 {
-    ofstream childCode_Libs(fileName, ios::out | ios::trunc);
-    childCode_Libs.close();
+    ofstream clearedFile(fileName, ios::out | ios::trunc);
+    clearedFile.close();
 }
 
 void clearLastLineFile(const string& fileName)
@@ -104,4 +118,10 @@ void outputFile(const string fileName)
         cout << line << endl;
     }
     file.close();
+}
+
+void createFile(const string fileName)
+{
+    ofstream createdFile(fileName);
+    createdFile.close();
 }

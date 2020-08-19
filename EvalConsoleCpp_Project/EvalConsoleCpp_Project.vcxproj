@@ -145,10 +145,12 @@
     <ClInclude Include="AppState.hpp" />
     <ClInclude Include="ColorsHelper.hpp" />
     <ClInclude Include="CompilierHelper.hpp" />
+    <ClInclude Include="Core.hpp" />
     <ClInclude Include="EvalConsoleErrors.hpp" />
     <ClInclude Include="FileHelper.hpp" />
     <ClInclude Include="FooHelper.hpp" />
     <ClInclude Include="TranslatorCommands.hpp" />
+    <ClInclude Include="VariablesSaver.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

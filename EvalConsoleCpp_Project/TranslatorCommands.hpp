@@ -1,10 +1,6 @@
 #pragma once
 #include <vector>
-
-bool showDispathedZone = true;
-bool showErrors = true;
-bool showTranslatorMessages = true;
-string compilier = "gcc";
+#include "VariablesSaver.hpp"
 
 vector<string> getArgs(string allArgs)
 {
@@ -21,6 +17,18 @@ vector<string> getArgs(string allArgs)
             return result;
         
         allArgs = allArgs.substr(result[result.size() - 1].length() + 1);
+    }
+
+    return result;
+}
+
+string collectArgs(vector<string> allArgs)
+{
+    string result;
+
+    for (string i : allArgs)
+    {
+        result += i + ' ';
     }
 
     return result;
@@ -406,15 +414,28 @@ void addToZone(vector<string> args)
     args.erase(args.begin());
     string insertedContent = vectorToString(args);
 
-    string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
+    if (insertedZone == "Vars")
+    {
+        varStruct serializedVar = Deserialize(collectArgs(args));
+        varsList.push_back(serializedVar);
+        return;
+    }
 
-    if (!checkFile(insertedZoneFileName))
-        throw EvalConsoleError_WrongZone(insertedZone);
+    if (insertedZone == "Code")
+        clearFile(appPath + "\\childCode_Code.cpp");
 
-    ofstream insertedZoneFile;
-    insertedZoneFile.open(insertedZoneFileName, ios::app);
-    insertedZoneFile << insertedContent << endl;
-    insertedZoneFile.close();
+    if (vectorHas(zones, insertedZone))
+    {
+        string insertedZoneFileName = appPath + "\\childCode_" + insertedZone + ".cpp";
+
+        if (!checkFile(insertedZoneFileName))
+            throw EvalConsoleError_WrongZone(insertedZone);
+
+        ofstream insertedZoneFile;
+        insertedZoneFile.open(insertedZoneFileName, ios::app);
+        insertedZoneFile << insertedContent << endl;
+        insertedZoneFile.close();
+    }
 }
 
 

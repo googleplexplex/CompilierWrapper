@@ -1,13 +1,23 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <list>
+#ifndef MIN
+#define MIN(f, s) (((f) >= (s))?(s):(f))
+#endif
 
-string getWord(string& allString, string separator = " ")
+string getWord(string& allString, const char* separators = " ")
 {
-    size_t separatorPos = allString.find(separator);
+    unsigned int separatorsCount = strlen(separators);
+    size_t minimalSeparatorsPos = string::npos;
 
-    if (separatorPos != string::npos)
-        return allString.substr(0, separatorPos);
+    for (int i = 0; i < separatorsCount; i++)
+    {
+        minimalSeparatorsPos = MIN(allString.find(separators[i]), minimalSeparatorsPos);
+    }
+
+    if (minimalSeparatorsPos != string::npos)
+        return allString.substr(0, minimalSeparatorsPos);
     else
         return allString.substr(0, allString.length());
 }
@@ -47,4 +57,80 @@ string vectorToString(vector<string>& stringsVector, string separator = " ")
     }
 
     return result;
+}
+
+template <typename T>
+bool listHas(list<T> list, T element)
+{
+    for (T i : list)
+    {
+        if (i == element)
+            return true;
+    }
+
+    return false;
+}
+
+template <typename T>
+bool vectorHas(vector<T> vector, T element)
+{
+    for (T i : vector)
+    {
+        if (i == element)
+            return true;
+    }
+
+    return false;
+}
+
+bool replace(string& str, const string& from, const string& to)
+{
+    size_t start_pos = str.find(from);
+    if (start_pos == string::npos)
+        return false;
+    str.replace(start_pos, from.length(), to);
+    return true;
+}
+
+string replaceAll(string str, const string& from, const string& to)
+{
+    string result = str;
+    string present = result;
+
+    int offset = 0;
+    while (true)
+    {
+        size_t find_pos = present.find(from);
+        if (find_pos == string::npos)
+            break;
+        offset += find_pos;
+        result.replace(offset, from.length(), to);
+        present = (char*)(present.c_str() + offset + from.size());
+    }
+
+    return result;
+}
+
+string duplicateSlashes(string str)
+{
+    string result = str;
+
+    for (int i = 0; i < result.size(); i++)
+    {
+        if (result[i] == '\\')
+        {
+            result.replace(i, 1, "\\\\");
+            i++;
+        }
+    }
+
+    return result;
+}
+
+template <typename T>
+T& getListElementRef(list<T>& gettedList, unsigned int index)
+{
+    auto iterToElement = gettedList.begin();
+    std::advance(iterToElement, index);
+    return (*iterToElement);
 }
