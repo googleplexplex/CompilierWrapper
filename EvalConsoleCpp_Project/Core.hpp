@@ -19,13 +19,16 @@ void collectChild()
     if (!childCodeFileStream.is_open())
         throw EvalConsoleError_CannotOpenFile(childFile.absolutePath);
 
-    childCodeFileStream << beforeLibs;
+    if(appMode == translator)
+        childCodeFileStream << beforeLibs;
     copyFileInStream(childLibsFile.absolutePath, childCodeFileStream);
     copyFileInStream(childOpsFile.absolutePath, childCodeFileStream);
     childCodeFileStream << beforeCode;
-    childCodeFileStream << getCodeVariablesInitilizer();
+    if (appMode == translator)
+        childCodeFileStream << getCodeVariablesInitilizer();
     copyFileInStream(childCodeFile.absolutePath, childCodeFileStream);
-    insertCodeVariablesSaverInStream(childCodeFileStream);
+    if (appMode == translator)
+        insertCodeVariablesSaverInStream(childCodeFileStream);
     childCodeFileStream << afterCode;
 
     childCodeFileStream.close();
@@ -77,7 +80,10 @@ InputStruct dispathInput(string& inp)
         if(inp[inp.length() - 1] == ')')
             return { "Ops", inp };
 
-        return { "Vars", inp };
+        if (appMode == translator)
+            return { "Vars", inp };
+        else
+            return { "Code", inp };
     }
 
     if (firstWord == "using")
@@ -106,7 +112,8 @@ void eval(string& codeString)
     setChildOutputColor();
     AppState = playing; showAppState();
     startChild();
-    updateCodeVariables();
+    if (appMode == translator)
+        updateCodeVariables();
 }
 
 void metaEval(string& dispathed)

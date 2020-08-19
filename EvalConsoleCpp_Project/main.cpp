@@ -27,6 +27,8 @@ string nameStateSeparator = " - ";
 bool showDispathedZone = true;
 bool showErrors = true;
 bool showTranslatorMessages = true;
+typedef enum appModeEnum { collector, translator };
+appModeEnum appMode = collector;
 
 HWND consoleHWND = GetConsoleWindow();
 

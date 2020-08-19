@@ -54,7 +54,6 @@ void updateCodeVariables()
 	ifstream file(varsValuesFile.absolutePath);
 
 	string line;
-	
 	for (int i = 0; i < varsList.size(); i++)
 	{
 		getline(file, line);

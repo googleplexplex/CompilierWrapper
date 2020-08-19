@@ -293,6 +293,8 @@ void help(vector<string>)
     cout << "   (First argument - \"translator\" or \"errors\", Second - \"on\" or \"off\")" << endl;
     cout << "dispatched zone - Hides / displays the output of the zone where the code is placed" << endl;
     cout << "   (\"show\" or \"hide\")" << endl;
+    cout << "set app mode - Set app mode" << endl;
+    cout << "   (\"collector\" or \"translator\")" << endl;
 
     cout << "show all code - Show all code" << endl;
     cout << "   (Has no arguments)" << endl;
@@ -414,14 +416,14 @@ void addToZone(vector<string> args)
     args.erase(args.begin());
     string insertedContent = vectorToString(args);
 
-    if (insertedZone == "Vars")
+    if (appMode == translator && insertedZone == "Vars")
     {
         varStruct serializedVar = Deserialize(collectArgs(args));
         varsList.push_back(serializedVar);
         return;
     }
 
-    if (insertedZone == "Code")
+    if (appMode == translator && insertedZone == "Code")
         clearFile(appPath + "\\childCode_Code.cpp");
 
     if (vectorHas(zones, insertedZone))
@@ -438,6 +440,20 @@ void addToZone(vector<string> args)
     }
 }
 
+void setAppMode(vector<string> arg)
+{
+    if (arg[0] == "collector")
+    {
+        appMode = collector;
+    }
+    else if (arg[0] == "translator")
+    {
+        appMode = translator;
+    }
+    else
+        throw EvalConsoleError_CannotOpenFile(arg[0]);
+}
+
 
 typedef void(*commandProc)(vector<string>);
 vector<pair<string, commandProc>> translatorCommands = {
@@ -446,6 +462,7 @@ vector<pair<string, commandProc>> translatorCommands = {
     { "echo", setEchoMode },
     { "dispatched zone", changeDispathResultShow },
     { "help", help },
+    { "set app mode", setAppMode },
 
     { "set compilier", setCompilier},
     { "set attributes", setAttributes},
